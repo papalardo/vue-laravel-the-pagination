@@ -6,6 +6,10 @@ A Vue.js pagination simple component for Laravel paginators.
 * [Vue.js](https://vuejs.org/) 2.x
 * [Laravel](http://laravel.com/docs/) 5.x
 
+## Simple example
+
+![Simple example](https://media.giphy.com/media/1b5u0PG7rgRzQbFHI9/giphy.gif) 
+
 ## Install
 
 ```bash

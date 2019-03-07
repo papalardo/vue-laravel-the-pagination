@@ -14,30 +14,29 @@
     //
     //
     //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
 
     var buildURLQuery = function (obj) { return Object.entries(obj).map(function (pair) { return pair.map(encodeURIComponent).join('='); }).join('&'); };
 
+    var validURL = function (str) { 
+        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return !!pattern.test(str);
+    };
+
     var script = {
-        // name: 'ThePaginatable', // vue component name,
-        data: function data() {
-            return {
-                paginate: {
-                    data: [],
-                    current_page: 0,
-                    last_page: 0,
-                    per_page: 0,
-                    total: 0,
-                },
-                interval: [1],
-                buzy: false,
-                request: null
-            }
-        },
         props: {
-            limits: {
-                type: Array,
-                default: function () { return [10, 25, 50, 100]; }
-            },
             query: {
                 type: Object,
             },
@@ -53,11 +52,41 @@
                 type: Object
             }
         },
+        data: function data() {
+            return {
+                paginate: {
+                    data: [],
+                    current_page: 0,
+                    last_page: 0,
+                    per_page: 0,
+                    total: 0,
+                },
+                interval: [1],
+                buzy: false,
+                request: null,
+
+                baseConfig: null,
+                baseUrl: null,
+            }
+        },
         computed: {
+            _config: function _config() {
+                return Object.assign({
+                        headers: [],
+                        customEventName: {
+                            loading: 'loading',
+                            getData: 'getData',
+                        }
+                    },
+                    this.baseConfig,
+                    this.config)
+            },
             _query: function _query() {
-                return Object.assign({per_page: this.limits[0]}, this.query)
+                return Object.assign({
+                    per_page: 20
+                }, this.query)
                 // return {
-                    // per_page: this.limits[0],
+                    // per_page: 20,
                     // ...this.query
                 // }
             }
@@ -67,7 +96,7 @@
                 this.get(1, true);
             }
         },
-        created: function created() {
+        mounted: function mounted() {
             this.get();
         },
         methods: {
@@ -118,9 +147,15 @@
                 // })
 
                 var url = this.baseURL ? ((this.baseURL) + "/" + (this.url) + "?" + queryToString) : ((this.url) + "?" + queryToString);
+
+                if(!validURL(url)) {
+                    console.error('URL to request is not valid. Verify prop ->url<- and/or default config ->baseURL<-');
+                    return;
+                }
+
                 this.makeRequest(url)
                     .then(function (res) {
-                        this$1.$emit(self.config && self.config.customEventName.getData || 'getData', res.data);
+                        this$1.$emit(this$1._config.customEventName.getData, res.data);
 
                         this$1.paginate = Object.assign(this$1.paginate,res);
                         // this.paginate = {
@@ -138,7 +173,8 @@
                         new ActiveXObject('Microsoft.XMLHTTP');
                     xhr.open('get', url, true);
 
-                    xhr.setRequestHeader('Authorization', 'test');
+                    
+                    Object.entries(self._config.headers).map(function (val) { return xhr.setRequestHeader(val[0], val[1]); });
 
                     xhr.onreadystatechange = function() {
                         var status;
@@ -154,7 +190,7 @@
                             }
 
                             self.request = null;
-                            self.$emit(self.config && self.config.customEventName.loading || 'loading', false);
+                            self.$emit(self._config.customEventName.loading, false);
                         }
                     };
 
@@ -162,7 +198,7 @@
 
                     self.request = xhr;
                     xhr.send();
-                    self.$emit(self.config && self.config.customEventName.loading || 'loading', true);
+                    self.$emit(self._config.customEventName.loading, true);
 
                 })
             }
@@ -308,17 +344,17 @@
     var __vue_script__ = script;
 
     /* template */
-    var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"pagination"},[_c('button',{staticClass:"pagination__button pagination__button--first-page",attrs:{"disabled":_vm.paginate.current_page <= 1},on:{"click":function($event){return _vm.get()}}}),_vm._v(" "),_c('button',{staticClass:"pagination__button pagination__button--prev-page",attrs:{"disabled":_vm.paginate.current_page <= 1},on:{"click":function($event){return _vm.get(_vm.paginate.current_page - 1)}}}),_vm._v(" "),_vm._l((_vm.interval),function(nr,index){return _c('button',{key:index,staticClass:"pagination__button",class:[{'active': _vm.paginate.current_page == nr}],on:{"click":function($event){return _vm.get(nr)}}},[_vm._v(_vm._s(nr))])}),_vm._v(" "),_c('button',{staticClass:"pagination__button pagination__button--next-page",attrs:{"disabled":_vm.paginate.current_page >= _vm.paginate.last_page},on:{"click":function($event){return _vm.get(_vm.paginate.current_page + 1)}}}),_vm._v(" "),_c('button',{staticClass:"pagination__button pagination__button--last-page",attrs:{"disabled":_vm.paginate.current_page >= _vm.paginate.last_page},on:{"click":function($event){return _vm.get(_vm.paginate.last_page)}}})],2)};
+    var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"pagination"},[_c('button',{staticClass:"pagination__button pagination__button--first-page",attrs:{"disabled":_vm.paginate.current_page <= 1},on:{"click":function($event){return _vm.get()}}},[_vm._t("first-page",[_vm._v("«")])],2),_vm._v(" "),_c('button',{staticClass:"pagination__button pagination__button--prev-page",attrs:{"disabled":_vm.paginate.current_page <= 1},on:{"click":function($event){return _vm.get(_vm.paginate.current_page - 1)}}},[_vm._t("prev-page",[_vm._v("‹")])],2),_vm._v(" "),_vm._l((_vm.interval),function(nr,index){return _c('button',{key:index,staticClass:"pagination__button",class:[{'active': _vm.paginate.current_page == nr}],on:{"click":function($event){return _vm.get(nr)}}},[_vm._v(_vm._s(nr))])}),_vm._v(" "),_c('button',{staticClass:"pagination__button pagination__button--next-page",attrs:{"disabled":_vm.paginate.current_page >= _vm.paginate.last_page},on:{"click":function($event){return _vm.get(_vm.paginate.current_page + 1)}}},[_vm._t("next-page",[_vm._v("›")])],2),_vm._v(" "),_c('button',{staticClass:"pagination__button pagination__button--last-page",attrs:{"disabled":_vm.paginate.current_page >= _vm.paginate.last_page},on:{"click":function($event){return _vm.get(_vm.paginate.last_page)}}},[_vm._t("last-page",[_vm._v("»")])],2)],2)};
     var __vue_staticRenderFns__ = [];
 
       /* style */
       var __vue_inject_styles__ = function (inject) {
         if (!inject) { return }
-        inject("data-v-499fb406_0", { source: ".pagination[data-v-499fb406]{display:inline-block}.pagination__button[data-v-499fb406]{cursor:pointer;color:#000;float:left;padding:8px 16px;text-decoration:none;border:1px solid #ddd;outline:0}.pagination__button[data-v-499fb406]:disabled,.pagination__button[disabled][data-v-499fb406]{background-color:#ccc;border:1px solid #ccc;color:#666;cursor:not-allowed}.pagination__button.active[data-v-499fb406]{background-color:#4caf50;color:#fff;border:1px solid #4caf50}.pagination__button[data-v-499fb406]:hover:not(.active):not(:disabled){background-color:#ddd}.pagination__button[data-v-499fb406]:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px}.pagination__button--first-page[data-v-499fb406]::before{content:'\\00AB'}.pagination__button--next-page[data-v-499fb406]::before{content:'\\203A'}.pagination__button--prev-page[data-v-499fb406]::before{content:'\\2039'}.pagination__button--last-page[data-v-499fb406]::before{content:'\\00BB'}.pagination .pagination__button[data-v-499fb406]:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px}", map: undefined, media: undefined });
+        inject("data-v-2cd2676e_0", { source: ".pagination[data-v-2cd2676e]{display:inline-block}.pagination__button[data-v-2cd2676e]{cursor:pointer;color:#000;float:left;padding:8px 16px;text-decoration:none;border:1px solid #ddd;outline:0}.pagination__button[data-v-2cd2676e]:disabled:not(.active),.pagination__button[disabled][data-v-2cd2676e]:not(.active){background-color:#ccc;border:1px solid #ccc;color:#666;cursor:not-allowed}.pagination__button.active[data-v-2cd2676e]{background-color:#4caf50;color:#fff;border:1px solid #4caf50}.pagination__button[data-v-2cd2676e]:hover:not(.active):not(:disabled){background-color:#ddd}.pagination__button[data-v-2cd2676e]:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px}.pagination .pagination__button[data-v-2cd2676e]:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px}", map: undefined, media: undefined });
 
       };
       /* scoped */
-      var __vue_scope_id__ = "data-v-499fb406";
+      var __vue_scope_id__ = "data-v-2cd2676e";
       /* module identifier */
       var __vue_module_identifier__ = undefined;
       /* functional template */
@@ -327,7 +363,7 @@
       
 
       
-      var thePaginatable = normalizeComponent_1(
+      var component = normalizeComponent_1(
         { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
         __vue_inject_styles__,
         __vue_script__,
@@ -338,12 +374,6 @@
         undefined
       );
 
-
-
-    var components = /*#__PURE__*/Object.freeze({
-        ThePaginatable: thePaginatable
-    });
-
     // Import vue components
 
     // install function executed by Vue.use()
@@ -351,16 +381,17 @@
         if (install.installed) { return; }
         install.installed = true;
         
-        Object.keys(components).forEach(function (componentName) {
+        // Object.keys(components).forEach((componentName) => {
             // Vue.component(componentName, components[componentName]);
-            Vue.component(componentName, Vue.extend(components[componentName]).extend({
+            Vue.component(options && options.nameComponent || 'ThePagination', Vue.extend(component).extend({
                 data: function data() {
                     return {
-                        baseURL: options.baseURL
+                        baseURL: options && options.baseURL,
+                        baseConfig: options && options.config
                     };
                 }
             }));
-        });
+        // });
     }
 
     // Create module definition for Vue.use()
@@ -381,7 +412,7 @@
     }
 
     exports.default = plugin;
-    exports.ThePaginatable = thePaginatable;
+    exports.ThePagination = component;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

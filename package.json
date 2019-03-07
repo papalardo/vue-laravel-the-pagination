@@ -1,6 +1,6 @@
 {
   "name": "vue-laravel-the-pagination",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "",
   "main": "dist/the-paginatable.umd.js",
   "module": "dist/the-paginatable.esm.js",

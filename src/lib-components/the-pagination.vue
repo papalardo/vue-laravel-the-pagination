@@ -31,10 +31,6 @@
 
     export default {
         props: {
-            limits: {
-                type: Array,
-                default: () => [10, 25, 50, 100]
-            },
             query: {
                 type: Object,
             },
@@ -81,10 +77,10 @@
             },
             _query() {
                 return Object.assign({
-                    per_page: this.limits[0]
+                    per_page: 20
                 }, this.query)
                 // return {
-                    // per_page: this.limits[0],
+                    // per_page: 20,
                     // ...this.query
                 // }
             }

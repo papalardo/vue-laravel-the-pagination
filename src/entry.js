@@ -1,7 +1,7 @@
 // Import vue components
 // import * as components from './lib-components/index';
 
-import component from './lib-components/the-paginatable.vue';
+import component from './lib-components/the-pagination.vue';
 
 // install function executed by Vue.use()
 function install(Vue, options) {

@@ -75,6 +75,10 @@ Prev/Next buttons can be customized using the `first-page`, `prev-page`, `next-p
 <the-pagination>
 ```
 
+### Example in Laravel
+
+![Backend like this](https://i.ibb.co/r5c1Z4f/Captura-de-Tela-2019-03-06-a-s-22-32-07.png) 
+
 ## API
 
 ### Props

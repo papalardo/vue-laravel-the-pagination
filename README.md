@@ -1,4 +1,5 @@
-[![npm](https://img.shields.io/npm/dt/vue-laravel-the-pagination.svg)]
+[![Version](https://img.shields.io/npm/v/vue-laravel-the-pagination.svg)]
+[![Downloads](https://img.shields.io/npm/dt/vue-laravel-the-pagination.svg)]
 
 # Laravel VueJs ThePagination
 A Vue.js pagination simple component for Laravel paginators.

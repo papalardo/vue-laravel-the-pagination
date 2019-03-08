@@ -1,5 +1,6 @@
-[![Version](https://img.shields.io/npm/v/vue-laravel-the-pagination.svg)]
-[![Downloads](https://img.shields.io/npm/dt/vue-laravel-the-pagination.svg)]
+[![Travis](https://travis-ci.org/papalardo/vue-laravel-the-pagination.svg?branch=master)](https://travis-ci.org/papalardo/vue-laravel-the-pagination)
+[![Version](https://img.shields.io/npm/v/vue-laravel-the-pagination.svg)](https://www.npmjs.com/package/vue-laravel-the-pagination)
+[![Downloads](https://img.shields.io/npm/dt/vue-laravel-the-pagination.svg)](https://www.npmjs.com/package/vue-laravel-the-pagination)
 
 # Laravel VueJs ThePagination
 A Vue.js pagination simple component for Laravel paginators.
